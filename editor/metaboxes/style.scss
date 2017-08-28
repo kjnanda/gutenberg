@@ -1,0 +1,8 @@
+.gutenberg-metabox-iframe {
+	width: 100%;
+	position: relative;
+
+	&.normal.sidebar-open {
+		width: calc( 100% - #{ $sidebar-width } );
+	}
+}
