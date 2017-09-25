@@ -17,7 +17,7 @@ import { registerBlockType, source, createBlock } from '../../api';
 import Editable from '../../editable';
 import BlockControls from '../../block-controls';
 
-const { children, prop } = source;
+const { html, prop } = source;
 
 const fromBrDelimitedContent = ( content ) => {
 	if ( undefined === content ) {
@@ -86,9 +86,9 @@ registerBlockType( 'core/list', {
 			default: 'UL',
 		},
 		values: {
-			type: 'array',
-			source: children( 'ol,ul' ),
-			default: [],
+			type: 'string',
+			source: html( 'ol,ul' ),
+			default: '',
 		},
 	},
 
@@ -168,19 +168,16 @@ registerBlockType( 'core/list', {
 	},
 
 	merge( attributes, attributesToMerge ) {
-		const valuesToMerge = attributesToMerge.values || [];
+		let valuesToMerge = attributesToMerge.values || '';
 
 		// Standard text-like block attribute.
 		if ( attributesToMerge.content ) {
-			valuesToMerge.push( attributesToMerge.content );
+			valuesToMerge += attributesToMerge.content;
 		}
 
 		return {
 			...attributes,
-			values: [
-				...attributes.values,
-				...valuesToMerge,
-			],
+			values: attributes.values + valuesToMerge,
 		};
 	},
 
@@ -344,10 +341,6 @@ registerBlockType( 'core/list', {
 	save( { attributes } ) {
 		const { nodeName, values } = attributes;
 
-		return createElement(
-			nodeName.toLowerCase(),
-			null,
-			values
-		);
+		return <Editable.Value tagName={ nodeName.toLowerCase() }>{ values }</Editable.Value>;
 	},
 } );

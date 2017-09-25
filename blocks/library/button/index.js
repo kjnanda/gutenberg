@@ -17,7 +17,7 @@ import BlockAlignmentToolbar from '../../block-alignment-toolbar';
 import ColorPalette from '../../color-palette';
 import InspectorControls from '../../inspector-controls';
 
-const { attr, children } = source;
+const { attr, html } = source;
 
 registerBlockType( 'core/button', {
 	title: __( 'Button' ),
@@ -36,8 +36,8 @@ registerBlockType( 'core/button', {
 			source: attr( 'a', 'title' ),
 		},
 		text: {
-			type: 'array',
-			source: children( 'a' ),
+			type: 'string',
+			source: html( 'a' ),
 		},
 		align: {
 			type: 'string',
@@ -109,9 +109,9 @@ registerBlockType( 'core/button', {
 
 		return (
 			<div className={ `align${ align }` } style={ { backgroundColor: color } }>
-				<a href={ url } title={ title }>
+				<Editable.Value tagName="a" href={ url } title={ title }>
 					{ text }
-				</a>
+				</Editable.Value>
 			</div>
 		);
 	},

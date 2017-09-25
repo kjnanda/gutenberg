@@ -1,4 +1,9 @@
 /**
+ * External Dependencies
+ */
+import { parse } from 'hpq';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -13,7 +18,7 @@ import Editable from '../../editable';
 import BlockControls from '../../block-controls';
 import BlockAlignmentToolbar from '../../block-alignment-toolbar';
 
-const { children, query, node } = source;
+const { html, query } = source;
 
 registerBlockType( 'core/pullquote', {
 
@@ -26,11 +31,11 @@ registerBlockType( 'core/pullquote', {
 	attributes: {
 		value: {
 			type: 'array',
-			source: query( 'blockquote > p', node() ),
+			source: query( 'blockquote > p', html() ), // Need a better matcher joining the values
 		},
 		citation: {
-			type: 'array',
-			source: children( 'footer' ),
+			type: 'string',
+			source: html( 'footer' ),
 		},
 		align: {
 			type: 'string',
@@ -48,6 +53,8 @@ registerBlockType( 'core/pullquote', {
 	edit( { attributes, setAttributes, focus, setFocus, className } ) {
 		const { value, citation, align } = attributes;
 		const updateAlignment = ( nextAlign ) => setAttributes( { align: nextAlign } );
+		const valueToString = ( val ) => val.map( ( content ) => `<p>${ content }</p>` ).join();
+		const stringToValue = ( val ) => parse( val, query( 'blockquote > p', html() ) );
 
 		return [
 			focus && (
@@ -61,10 +68,10 @@ registerBlockType( 'core/pullquote', {
 			<blockquote key="quote" className={ className }>
 				<Editable
 					multiline="p"
-					value={ value }
+					value={ valueToString( value ) }
 					onChange={
 						( nextValue ) => setAttributes( {
-							value: nextValue,
+							value: stringToValue( nextValue ),
 						} )
 					}
 					placeholder={ __( 'Write quote…' ) }
@@ -95,9 +102,11 @@ registerBlockType( 'core/pullquote', {
 
 		return (
 			<blockquote className={ `align${ align }` }>
-				{ value && value.map( ( paragraph, i ) => <p key={ i }>{ paragraph.props.children }</p> ) }
+				{ value && value.map( ( paragraph, i ) =>
+					<Editable.Value tagName="p" key={ i }>{ paragraph }</Editable.Value>
+				) }
 				{ citation && citation.length > 0 && (
-					<footer>{ citation }</footer>
+					<Editable.Value tagName="footer">{ citation }</Editable.Value>
 				) }
 			</blockquote>
 		);
