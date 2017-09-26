@@ -27,8 +27,8 @@ registerBlockType( 'core/table', {
 			source: html( 'table' ),
 			default: `
 				<tbody>
-					<tr><td><br /></td><td><br /></td></tr>
-					<tr><td><br /></td><td><br /></td></tr>
+					<tr><td></td><td></td></tr>
+					<tr><td></td><td></td></tr>
 				</tbody>,
 			`,
 		},
