@@ -6,13 +6,9 @@ import { combineReducers } from 'redux';
 import { get, reduce, keyBy, first, last, omit, without, mapValues } from 'lodash';
 
 /**
- * WordPress dependencies
- */
-import { getBlockTypes } from '@wordpress/blocks';
-
-/**
  * Internal dependencies
  */
+import { getBlockTypes } from './api';
 import { combineUndoableReducers } from './utils/undoable-reducer';
 
 /**

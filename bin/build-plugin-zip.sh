@@ -78,17 +78,15 @@ mv gutenberg.tmp.php gutenberg.php
 zip -r gutenberg.zip \
 	gutenberg.php \
 	lib/*.php \
-	blocks/library/*/*.php \
+	editor/library/*/*.php \
 	post-content.js \
 	$vendor_scripts \
-	blocks/build/*.{js,map} \
 	components/build/*.{js,map} \
 	date/build/*.{js,map} \
 	editor/build/*.{js,map} \
 	element/build/*.{js,map} \
 	i18n/build/*.{js,map} \
 	utils/build/*.{js,map} \
-	blocks/build/*.css \
 	components/build/*.css \
 	editor/build/*.css \
 	README.md

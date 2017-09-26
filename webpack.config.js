@@ -11,12 +11,12 @@ const mainCSSExtractTextPlugin = new ExtractTextPlugin( {
 
 // CSS loader for styles specific to block editing.
 const editBlocksCSSPlugin = new ExtractTextPlugin( {
-	filename: './blocks/build/edit-blocks.css',
+	filename: './editor/build/edit-blocks.css',
 } );
 
 // CSS loader for styles specific to blocks in general.
 const blocksCSSPlugin = new ExtractTextPlugin( {
-	filename: './blocks/build/style.css',
+	filename: './editor/build/blocks.css',
 } );
 
 // Configuration for the ExtractTextPlugin.
@@ -37,7 +37,6 @@ const extractConfig = {
 };
 
 const entryPointNames = [
-	'blocks',
 	'components',
 	'date',
 	'editor',
@@ -97,21 +96,21 @@ const config = {
 			{
 				test: /style\.s?css$/,
 				include: [
-					/blocks/,
+					/editor\/library/,
 				],
 				use: blocksCSSPlugin.extract( extractConfig ),
 			},
 			{
 				test: /editor\.s?css$/,
 				include: [
-					/blocks/,
+					/editor\/library/,
 				],
 				use: editBlocksCSSPlugin.extract( extractConfig ),
 			},
 			{
 				test: /\.s?css$/,
 				exclude: [
-					/blocks/,
+					/editor\/library/,
 				],
 				use: mainCSSExtractTextPlugin.extract( extractConfig ),
 			},
