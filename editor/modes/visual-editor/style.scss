@@ -530,3 +530,22 @@ $sticky-bottom-offset: 20px;
 		margin-left: $item-spacing;
 	}
 }
+
+.blocks-visual-editor__block-html textarea {
+	display: block;
+	margin: 0;
+	width: 100%;
+	border: none;
+	outline: none;
+	box-shadow: none;
+	resize: none;
+	overflow: hidden;
+	font-family: $editor-html-font;
+	font-size: $text-editor-font-size;
+	line-height: 150%;
+	transition: padding .2s linear;
+
+	&:focus {
+		box-shadow: none;
+	}
+}

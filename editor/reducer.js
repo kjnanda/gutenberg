@@ -414,6 +414,17 @@ export function hoveredBlock( state = null, action ) {
 	return state;
 }
 
+export function blocksMode( state = {}, action ) {
+	if ( action.type === 'TOGGLE_BLOCK_MODE' ) {
+		return {
+			...state,
+			[ action.uid ]: state[ action.uid ] && state[ action.uid ] === 'html' ? 'visual' : 'html',
+		};
+	}
+
+	return state;
+}
+
 /**
  * Reducer returning the block insertion point
  *
@@ -535,6 +546,7 @@ export default optimist( combineReducers( {
 	isTyping,
 	blockSelection,
 	hoveredBlock,
+	blocksMode,
 	showInsertionPoint,
 	preferences,
 	panel,
