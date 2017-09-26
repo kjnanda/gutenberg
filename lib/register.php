@@ -101,7 +101,7 @@ function gutenberg_add_admin_bar_edit_link( $wp_admin_bar ) {
 	$gutenberg_text = __( 'Edit in Gutenberg', 'gutenberg' );
 	$gutenberg_url = gutenberg_get_edit_post_url( $post->ID );
 
-	$is_gutenberg_default = gutenberg_post_has_blocks( $post->ID );
+	$is_gutenberg_default = post_has_blocks( $post->ID );
 
 	// Update title for edit link to indicate default editor.
 	$wp_admin_bar->add_node( array_merge(
@@ -222,7 +222,7 @@ function gutenberg_get_edit_post_url( $post_id ) {
  */
 function gutenberg_filter_edit_post_link( $url, $post_id, $context ) {
 	$post = get_post( $post_id );
-	if ( gutenberg_can_edit_post( $post_id ) && gutenberg_post_has_blocks( $post_id ) && post_type_supports( get_post_type( $post_id ), 'editor' ) ) {
+	if ( gutenberg_can_edit_post( $post_id ) && post_has_blocks( $post_id ) && post_type_supports( get_post_type( $post_id ), 'editor' ) ) {
 		$gutenberg_url = gutenberg_get_edit_post_url( $post->ID );
 		if ( 'display' === $context ) {
 			$gutenberg_url = esc_url( $gutenberg_url );
@@ -264,7 +264,7 @@ function gutenberg_can_edit_post( $post_id ) {
  * @param int $post_id Post ID.
  * @return bool Whether the post has blocks.
  */
-function gutenberg_post_has_blocks( $post_id ) {
+function post_has_blocks( $post_id ) {
 	$post = get_post( $post_id );
 	return $post && strpos( $post->post_content, '<!-- wp:' ) !== false;
 }
@@ -277,7 +277,7 @@ function gutenberg_post_has_blocks( $post_id ) {
  * @return array                A filtered array of post display states.
  */
 function gutenberg_add_gutenberg_post_state( $post_states, $post ) {
-	if ( gutenberg_post_has_blocks( $post->ID ) ) {
+	if ( post_has_blocks( $post->ID ) ) {
 		$post_states[] = 'Gutenberg';
 	}
 

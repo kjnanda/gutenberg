@@ -170,13 +170,13 @@ class Admin_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests gutenberg_post_has_blocks().
+	 * Tests post_has_blocks().
 	 *
-	 * @covers gutenberg_post_has_blocks
+	 * @covers post_has_blocks
 	 */
-	function test_gutenberg_post_has_blocks() {
-		$this->assertTrue( gutenberg_post_has_blocks( self::$post_with_blocks ) );
-		$this->assertFalse( gutenberg_post_has_blocks( self::$post_without_blocks ) );
+	function test_post_has_blocks() {
+		$this->assertTrue( post_has_blocks( self::$post_with_blocks ) );
+		$this->assertFalse( post_has_blocks( self::$post_without_blocks ) );
 	}
 
 	/**
