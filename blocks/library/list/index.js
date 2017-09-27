@@ -17,6 +17,7 @@ import { registerBlockType, source, createBlock } from '../../api';
 import Editable from '../../editable';
 import BlockControls from '../../block-controls';
 
+const { TEXT_NODE } = window.Node;
 const { html, prop } = source;
 
 const fromBrDelimitedContent = ( content ) => {
@@ -41,7 +42,6 @@ const toBrDelimitedContent = ( values ) => {
 	const list = document.createElement( 'ul' );
 	list.innerHTML = values;
 	const content = [];
-	const { TEXT_NODE } = window.Node;
 	const appendLiToContent = ( li ) => {
 		li.childNodes.forEach( ( element ) => {
 			if ( 'UL' === element.nodeName || 'OL' === element.nodeName ) { // lists within lists
