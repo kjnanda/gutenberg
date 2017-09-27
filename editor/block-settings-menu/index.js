@@ -13,10 +13,10 @@ import { IconButton } from '@wordpress/components';
  * Internal dependencies
  */
 import './style.scss';
-import { isEditorSidebarOpened, getBlockMode } from '../selectors';
+import { isEditorSidebarOpened } from '../selectors';
 import { selectBlock, toggleBlockMode } from '../actions';
 
-function BlockSettingsMenu( { mode, onDelete, onToggleMode, onSelect, isSidebarOpened, toggleSidebar, setActivePanel } ) {
+function BlockSettingsMenu( { onDelete, onToggleMode, onSelect, isSidebarOpened, toggleSidebar, setActivePanel } ) {
 	const toggleInspector = () => {
 		onSelect();
 		setActivePanel();
@@ -42,17 +42,16 @@ function BlockSettingsMenu( { mode, onDelete, onToggleMode, onSelect, isSidebarO
 			<IconButton
 				className="editor-block-settings-menu__control"
 				onClick={ onToggleMode }
-				icon={ mode === 'html' ? 'edit' : 'html' }
-				label={ __( 'Delete the block' ) }
+				icon="html"
+				label={ __( 'Switch between the visual/textual mode' ) }
 			/>
 		</div>
 	);
 }
 
 export default connect(
-	( state, ownProps ) => ( {
+	( state ) => ( {
 		isSidebarOpened: isEditorSidebarOpened( state ),
-		mode: getBlockMode( state, ownProps.uid ),
 	} ),
 	( dispatch, ownProps ) => ( {
 		onDelete() {
