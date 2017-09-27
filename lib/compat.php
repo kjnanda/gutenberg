@@ -138,3 +138,20 @@ function gutenberg_disable_editor_settings_wpautop( $settings ) {
 	return $settings;
 }
 add_filter( 'wp_editor_settings', 'gutenberg_disable_editor_settings_wpautop' );
+
+/**
+ * As a substitute for the default content `wpautop` filter, applies autop
+ * behavior only for posts where content does not contain blocks.
+ *
+ * @param  string $content Post content.
+ * @return string          Paragraph-converted text if non-block content.
+ */
+function gutenberg_wpautop( $content ) {
+	if ( content_has_blocks( $content ) ) {
+		return $content;
+	}
+
+	return wpautop( $content );
+}
+remove_filter( 'the_content', 'wpautop' );
+add_filter( 'the_content', 'gutenberg_wpautop' );
