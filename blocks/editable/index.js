@@ -200,6 +200,8 @@ export default class Editable extends Component {
 
 			if ( this.editor.dom.isEmpty( rootNode ) && this.props.onReplace ) {
 				this.props.onReplace( content );
+			} else {
+				this.splitContent( content );
 			}
 		}
 	}
