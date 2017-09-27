@@ -8,6 +8,7 @@ import { isEqual } from 'lodash';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, findDOMNode } from '@wordpress/element';
+import { Panel, PanelBody } from '@wordpress/components';
 
 // @TODO add error handling.
 class MetaboxIframe extends Component {
@@ -17,6 +18,7 @@ class MetaboxIframe extends Component {
 		this.state = {
 			width: 0,
 			height: 0,
+			isOpen: false,
 		};
 
 		this.formData = [];
@@ -24,12 +26,19 @@ class MetaboxIframe extends Component {
 		this.form = null;
 		this.hasLoaded = false;
 
+		this.toggle = this.toggle.bind( this );
 		this.checkMessageForResize = this.checkMessageForResize.bind( this );
 		this.handleDoubleBuffering = this.handleDoubleBuffering.bind( this );
 		this.handleMetaboxReload = this.handleMetaboxReload.bind( this );
 		this.checkMetaboxState = this.checkMetaboxState.bind( this );
 		this.isFrameAccessible = this.isFrameAccessible.bind( this );
 		this.observeChanges = this.observeChanges.bind( this );
+	}
+
+	toggle() {
+		this.setState( {
+			isOpen: ! this.state.isOpen,
+		} );
 	}
 
 	isFrameAccessible() {
@@ -51,13 +60,17 @@ class MetaboxIframe extends Component {
 	}
 
 	componentDidMount() {
-		/**
-		 * Sets up an event listener for resizing. The resizing occurs inside
-		 * the iframe, see gutenberg/assets/js/metabox.js
-		 */
-		window.addEventListener( 'message', this.checkMessageForResize, false );
-		this.node.style.display = 'none';
-		this.node.addEventListener( 'load', this.observeChanges );
+		if ( this.isFrameAccessible() ) {
+			/**
+			 * Sets up an event listener for resizing. The resizing occurs inside
+			 * the iframe, see gutenberg/assets/js/metabox.js
+			 */
+			window.addEventListener( 'message', this.checkMessageForResize, false );
+
+			// Initially set node to not display anything so that when it loads, we can see it.
+			this.node.style.display = 'none';
+			this.node.addEventListener( 'load', this.observeChanges );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -78,6 +91,20 @@ class MetaboxIframe extends Component {
 			 * double buffering.
 			 */
 			this.clonedNode.addEventListener( 'load', this.handleDoubleBuffering );
+		}
+	}
+
+	componentDidUpdate() {
+		if ( this.isFrameAccessible() ) {
+			/**
+			 * Sets up an event listener for resizing. The resizing occurs inside
+			 * the iframe, see gutenberg/assets/js/metabox.js
+			 */
+			window.addEventListener( 'message', this.checkMessageForResize, false );
+
+			// Initially set node to not display anything so that when it loads, we can see it.
+			//this.node.style.display = 'none';
+			this.node.addEventListener( 'load', this.observeChanges );
 		}
 	}
 
@@ -114,19 +141,21 @@ class MetaboxIframe extends Component {
 	}
 
 	componentWillUnmount() {
-		const iframe = findDOMNode( this.node );
-		iframe.removeEventListener( 'message', this.checkMessageForResize );
+		if ( this.isFrameAccessible() ) {
+			const iframe = findDOMNode( this.node );
+			iframe.removeEventListener( 'message', this.checkMessageForResize );
 
-		if ( this.dirtyObserver ) {
-			this.dirtyObserver.disconnect();
+			if ( this.dirtyObserver ) {
+				this.dirtyObserver.disconnect();
+			}
+
+			if ( this.form !== null ) {
+				this.form.removeEventListener( 'input', this.checkMetaboxState );
+				this.form.removeEventListener( 'change', this.checkMetaboxState );
+			}
+
+			this.node.removeEventListener( 'load', this.observeChanges );
 		}
-
-		if ( this.form !== null ) {
-			this.form.removeEventListener( 'input', this.checkMetaboxState );
-			this.form.removeEventListener( 'change', this.checkMetaboxState );
-		}
-
-		this.node.removeEventListener( 'load', this.observeChanges );
 	}
 
 	observeChanges() {
@@ -157,7 +186,7 @@ class MetaboxIframe extends Component {
 	}
 
 	getFormData( node ) {
-		if ( ! this.isFrameAccessible ) {
+		if ( ! this.isFrameAccessible() ) {
 			return;
 		}
 
@@ -169,19 +198,21 @@ class MetaboxIframe extends Component {
 	}
 
 	checkMetaboxState() {
-		const entries = this.getFormData( this.node );
+		if ( this.props.isUpdating !== true ) {
+			const entries = this.getFormData( this.node );
 
-		if ( ! isEqual( this.originalFormData, entries ) ) {
-			if ( this.props.isDirty === false ) {
-				this.props.changedMetaboxState( this.props.location, true );
+			if ( ! isEqual( this.originalFormData, entries ) ) {
+				if ( this.props.isDirty === false ) {
+					this.props.changedMetaboxState( this.props.location, true );
+				}
+
+				return;
 			}
 
-			return;
-		}
-
-		// If the data is the same as the original and we have metabox marked as dirty.
-		if ( this.props.isDirty === true ) {
-			this.props.changedMetaboxState( this.props.location, false );
+			// If the data is the same as the original and we have metabox marked as dirty.
+			if ( this.props.isDirty === true ) {
+				this.props.changedMetaboxState( this.props.location, false );
+			}
 		}
 	}
 
@@ -231,20 +262,28 @@ class MetaboxIframe extends Component {
 
 	render() {
 		const { location, className, id } = this.props;
+		const { isOpen } = this.state;
 
 		return (
-			<div id="iframe-container" className={ className }>
-				<iframe
-					ref={ ( node ) => {
-						this.node = node;
-					} }
+			<Panel className="editor-meta-boxes">
+				<PanelBody
 					title={ __( 'Extended Settings' ) }
-					key="metabox"
-					id={ id }
-					src={ `${ window._wpMetaboxUrl }&metabox=${ location }` }
-					width={ Math.ceil( this.state.width ) }
-					height={ Math.ceil( this.state.height ) } />
-			</div>
+					opened={ isOpen }
+					onToggle={ this.toggle }>
+					<div id="iframe-container" className={ className }>
+						<iframe
+							ref={ ( node ) => {
+								this.node = node;
+							} }
+							title={ __( 'Extended Settings' ) }
+							key="metabox"
+							id={ id }
+							src={ `${ window._wpMetaboxUrl }&metabox=${ location }` }
+							width={ Math.ceil( this.state.width ) }
+							height={ Math.ceil( this.state.height ) } />
+					</div>
+				</PanelBody>
+			</Panel>
 		);
 	}
 }

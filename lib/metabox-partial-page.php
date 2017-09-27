@@ -328,11 +328,6 @@ function gutenberg_metabox_partial_page( $post_type, $metabox_context ) {
 		 * opening and closing in the block editor. By default it is open.
 		 */
 		?>
-		<header class="gutenberg-metaboxes__header" style="<?php echo $heading_style; ?>">
-			<h2 style="font-size: 14px;">Extended Settings</h2>
-			<!-- @TODO leaving this commented out as it may need to be used. -->
-			<!--<input name="save" type="submit" class="button button-primary button-large" id="publish" value="Update Settings">-->
-		</header>
 		<div id="poststuff" class="sidebar-open">
 			<div class="gutenberg-metaboxes">
 				<div id="postbox-container-2" class="postbox-container">
