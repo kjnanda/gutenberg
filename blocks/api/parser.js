@@ -5,6 +5,11 @@ import { parse as hpqParse, attr } from 'hpq';
 import { mapValues, reduce, pickBy } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { formatting } from '@wordpress/utils';
+
+/**
  * Internal dependencies
  */
 import { parse as grammarParse } from './post.pegjs';
@@ -165,8 +170,13 @@ export function getBlockAttributes( blockType, rawContent, attributes ) {
  * @return {?Object}            An initialized block object (if possible)
  */
 export function createBlockWithFallback( name, rawContent, attributes ) {
-	// Use type from block content, otherwise find unknown handler.
-	name = name || getUnknownTypeHandlerName();
+	// If unknown type, use unknown handler and apply paragraph formatting.
+	if ( undefined === name ) {
+		rawContent = formatting.autop( rawContent );
+		name = getUnknownTypeHandlerName();
+	}
+
+	rawContent = rawContent.trim();
 
 	// Convert 'core/text' blocks in existing content to the new
 	// 'core/paragraph'.
@@ -221,7 +231,7 @@ export function createBlockWithFallback( name, rawContent, attributes ) {
 export function parseWithGrammar( content ) {
 	return grammarParse( content ).reduce( ( memo, blockNode ) => {
 		const { blockName, rawContent, attrs } = blockNode;
-		const block = createBlockWithFallback( blockName, rawContent.trim(), attrs );
+		const block = createBlockWithFallback( blockName, rawContent, attrs );
 		if ( block ) {
 			memo.push( block );
 		}

@@ -230,8 +230,9 @@ describe( 'block parser', () => {
 			registerBlockType( 'core/unknown-block', defaultBlockSettings );
 			setUnknownTypeHandlerName( 'core/unknown-block' );
 
-			const block = createBlockWithFallback( null, 'content' );
+			const block = createBlockWithFallback( undefined, 'content\n\n' );
 			expect( block.name ).toEqual( 'core/unknown-block' );
+			expect( block.originalContent ).toEqual( '<p>content</p>' );
 			expect( block.attributes ).toEqual( {} );
 		} );
 
