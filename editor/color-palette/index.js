@@ -38,14 +38,14 @@ class ColorPalette extends Component {
 	render() {
 		const { colors, value, onChange } = this.props;
 		return (
-			<div className="blocks-color-palette">
+			<div className="editor-color-palette">
 				{ colors.map( ( color ) => {
 					const style = { color: color };
-					const className = classnames( 'blocks-color-palette__item', { 'is-active': value === color } );
+					const className = classnames( 'editor-color-palette__item', { 'is-active': value === color } );
 					/* Disable reason: aria-current seems like a valid aria-prop and well-suited for this */
 					/* eslint-disable jsx-a11y/aria-props */
 					return (
-						<div key={ color } className="blocks-color-palette__item-wrapper">
+						<div key={ color } className="editor-color-palette__item-wrapper">
 							<button
 								className={ className }
 								style={ style }
@@ -58,16 +58,16 @@ class ColorPalette extends Component {
 					/* eslint-enable jsx-a11y/aria-props */
 				} ) }
 
-				<div className="blocks-color-palette__item-wrapper blocks-color-palette__custom-color">
+				<div className="editor-color-palette__item-wrapper editor-color-palette__custom-color">
 					<button
-						className="blocks-color-palette__item"
+						className="editor-color-palette__item"
 						onClick={ this.openPicker }
 						aria-label={ __( 'Open custom color picker' ) }
 					/>
 					<Popover
 						isOpen={ this.state.opened }
 						onClose={ this.closePicker }
-						className="blocks-color-palette__picker"
+						className="editor-color-palette__picker"
 					>
 						<ChromePicker
 							color={ value }
@@ -81,9 +81,9 @@ class ColorPalette extends Component {
 					</Popover>
 				</div>
 
-				<div className="blocks-color-palette__item-wrapper blocks-color-palette__clear-color">
-					<button className="blocks-color-palette__item" onClick={ () => onChange( undefined ) }>
-						<div className="blocks-color-palette__clear-color-line" />
+				<div className="editor-color-palette__item-wrapper editor-color-palette__clear-color">
+					<button className="editor-color-palette__item" onClick={ () => onChange( undefined ) }>
+						<div className="editor-color-palette__clear-color-line" />
 					</button>
 				</div>
 			</div>
